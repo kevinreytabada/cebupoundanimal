@@ -29,6 +29,24 @@
                     </ul>
                 </div>
             </nav>
+            <br>
+            <a href="pets-create.html"class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">add</i></a>
+            <table class="striped">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Gender</th>
+                        <th>Bread</th>
+                        <th>Schedule</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+        
+                <tbody class="pets-data">
+                </tbody>
+            </table>
+
             <ul id="slide-out" class="side-nav">
                 <li>
                     <div class="user-view">
@@ -45,6 +63,26 @@
                     <li><div class="divider"></div></li>
                 <li><a class="waves-effect" href="#!">Third Link With Waves</a></li>
             </ul>    
+        
+                <!-- Modal Structure -->
+            <div id="modal1" class="modal">
+                <div class="modal-content">
+                    <input type="hidden" name="pet_id" id="pet_id" value="">
+                    <div class="input-field col s12" >
+                        <select id="service_id">
+                            <option value="1">Deworming</option>
+                            <option value="2">Mange Treatment</option>
+                            <option value="3">Spay and Neuter</option>
+                            <option value="4">Rabies Vaccination</option>
+                            <option value="5">Basic Medical Consultation</option>
+                        </select>
+                        <label>Type</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat" id="submitRequest">Request</a>
+                </div>
+            </div>
         </div>
         <script type="text/javascript" src="cordova.js"></script>
         <script type="text/javascript" src="js/index.js"></script>
@@ -54,29 +92,54 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script> -->
         <script>
             $(document).ready(function () {
-                $('#submit').click(function (e) {
-                    e.preventDefault();
+                $('.modal').modal();
+                $('select').material_select();
+                $(document).on("click", ".click-modal", function () {
+                    var pet_id = $(this).data('id');
+                    $('#pet_id').val(pet_id);
+                });
+                $('#submitRequest').click(function (){
+                    var pet_id = $('#pet_id').val();
+                    var service_id = $('#service_id').val();
                     $.ajax({
                         method: "POST",
-                        url: "http://cebupoundanimals.herokuapp.com/mobile/login",
+                        url: "http://cebupoundanimals.herokuapp.com/mobile/mypets/service/create",
                         data: { 
-                            username: $('#username').val(), 
-                            password: $('#password').val() 
-                        },
-                        dataType: 'json',
-                        success: function (response) {
-                            console.log(response);
-                            if(response.status) {
-                                localStorage.setItem("first_name", response.user.first_name);
-                                localStorage.setItem("last_name", response.user.last_name);
-                                localStorage.setItem("user_id", response.user.id);
-                                window.location.href = "dashboard.html"
-                            } else {
-                                alert('Invalid username/password')
-                            }
-                        },
-
+                            pet_id: pet_id, 
+                            service_id: service_id 
+                        }
+                    })
+                    .done(function( response ) {
+                        if(response.status) {
+                        alert('Pet service requested. Wait for admin schedule');
+                        window.location.reload();
+                        } else {
+                        alert('Something went wrong...');
+                        window.location.reload();
+                        }
                     });
+                });
+                $.ajax({
+                    method: "GET",
+                    url: "http://cebupoundanimals.herokuapp.com/mobile/mypets/" + localStorage.getItem('user_id'),
+                    success: function(response) {
+                        for (var i = response.length - 1; i >= 0; i--) {
+                            $('.pets-data').append(
+                                '<tr>' +
+                                // '<td><img src="http://localhost:8000/images/'+response[i].image+'" width="50" height="auto"></td>' + 
+                                '<td><img src="http://materializecss.com/images/yuna.jpg" width="50" height="auto"></td>'+
+                                '<td><a href="pets-details.html?id='+response[i].id+'">'+response[i].name+'</a></td>' +
+                                '<td>'+response[i].gender+'</td>' +
+                                '<td>'+response[i].breed+'</td>' + 
+                                '<td>N/A</td>' +
+                                '<td><a class="waves-effect waves-light btn modal-trigger click-modal" href="#modal1"  data-id="'+response[i].id+'">Request</a></td>'+ 
+                                'Request Service' +
+                                '</button></td>' +
+                                '</tr>'
+                                // '<td>'+response[i].color+'</td>'
+                            );
+                        }
+                    }
                 });
                 $('.button-collapse').sideNav({
                     menuWidth: 300, // Default is 300
