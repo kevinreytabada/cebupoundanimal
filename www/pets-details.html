@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!--
+        Customize this policy to fit your own app's needs. For more guidance, see:
+            https://github.com/apache/cordova-plugin-whitelist/blob/master/README.md#content-security-policy
+        Some notes:
+            * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
+            * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
+            * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
+                * Enable inline JS: add 'unsafe-inline' to default-src
+        -->
+        <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *"> -->
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+        <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous"> -->
+        <link rel="stylesheet" href="css/material.css">
+        <title>Hello World</title>
+    </head>
+    <body>
+        <div>   
+            <nav>
+                <div class="nav-wrapper">
+                    <a href="#" class="brand-logo center">Cebu Pound Animal</a>
+                    <ul id="nav-mobile">
+                    <li><a href="#" data-activates="slide-out" class="button-collapse">Menu</a>  </li>
+                    </ul>
+                </div>
+            </nav>
+            <br>
+            <div class="row">
+                <form class="col s12">
+                    <div class="row">
+                    <div class="input-field col s6">
+                        <input id="name" type="text" class="validate" placeholder="Name">
+                        <label for="first_name">Name</label>
+                    </div>
+                    <div class="input-field col s6">
+                        <input id="age" type="text" class="validate" placeholder="Age">
+                        <label for="last_name">Age</label>
+                    </div>
+                    </div>
+                    <div class="row">
+                    <div class="input-field col s12">
+                        <input id="gender" type="text" class="validate" placeholder="Gender">
+                        <label for="disabled">Gender</label>
+                    </div>
+                    </div>
+                    <div class="row">
+                    <div class="input-field col s12">
+                        <input id="breed" type="text" class="validate" placeholder="Breed">
+                        <label for="password">Breed</label>
+                    </div>
+                    </div>
+                    <div class="row">
+                    <div class="input-field col s12">
+                        <input id="color" type="email" class="validate" placeholder="Color">
+                        <label for="email">Color</label>
+                    </div>
+                    <div class="input-field col s12">
+                            <input id="pet_id_type" type="email" class="validate" placeholder="Type">
+                            <label for="email">Type</label>
+                        </div>
+                    </div>
+                    <a class="waves-effect waves-light btn-large" id="submit">Update</a>
+                </form>
+                </div>
+            <ul id="slide-out" class="side-nav">
+                <li>
+                    <div class="user-view">
+                        <div class="background">
+                            <img src="http://materializecss.com/images/office.jpg">
+                        </div>
+                        <a href="#!user"><img class="circle" src="http://materializecss.com/images/yuna.jpg"></a>
+                        <a href="#!name"><span class="white-text name">John Doe</span></a>
+                        <a href="#!email"><span class="white-text email">jdandturk@gmail.com</span></a>
+                    </div>
+                </li>
+                    <li><a href="pets.html">Pets</a></li>
+                    <li><a href="#!">Services</a></li>
+                    <li><div class="divider"></div></li>
+                <!-- <li><a class="waves-effect" href="#!">Third Link With Waves</a></li> -->
+            </ul>    
+        </div>
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="js/jquery.js"></script>
+        <script type="text/javascript" src="js/material.js"></script>
+        <script>
+            $(document).ready(function () {
+                
+                var getUrlParameter = function getUrlParameter(sParam) {
+                var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+                sURLVariables = sPageURL.split('&'),
+                sParameterName,
+                i;
+
+                    for (i = 0; i < sURLVariables.length; i++) {
+                        sParameterName = sURLVariables[i].split('=');
+
+                        if (sParameterName[0] === sParam) {
+                            return sParameterName[1] === undefined ? true : sParameterName[1];
+                        }
+                    }
+                };
+
+                $.ajax({
+                    method: "GET",
+                    url: "http://cebupoundanimals.herokuapp.com/mobile/mypets/details/" + getUrlParameter('id'),
+                    success: function (response) {
+                        console.log(response);
+                        $('#name').val(response.name);
+                        $('#age').val(response.age);
+                        $('#gender').val(response.gender);
+                        $('#breed').val(response.breed);
+                        $('#color').val(response.color);
+                        $('#pet_type_id').val(response.pet_type_id);
+                    }
+                });
+                
+                $('.button-collapse').sideNav({
+                    menuWidth: 300, // Default is 300
+                    edge: 'left', // Choose the horizontal origin
+                    closeOnClick: true, // Closes side-nav on <a> clicks, useful for Angular/Meteor
+                    draggable: true, // Choose whether you can drag to open on touch screens,
+                    onOpen: function(el) {  }, // A function to be called when sideNav is opened
+                    onClose: function(el) { }, // A function to be called when sideNav is closed
+                    }
+                );
+            });
+        </script>
+    </body>
+</html>
