@@ -16,6 +16,7 @@
         <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
         <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous"> -->
         <link rel="stylesheet" href="css/material.css">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
         <title>Hello World</title>
     </head>
     <body>
@@ -42,10 +43,13 @@
                     </div>
                     </div>
                     <div class="row">
-                    <div class="input-field col s12">
-                        <input id="gender" type="text" class="validate" placeholder="Gender">
-                        <label for="disabled">Gender</label>
-                    </div>
+                        <div class="input-field col s12">
+                            <select id="gender" name="gender">
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+                            <label>Gender</label>
+                        </div>
                     </div>
                     <div class="row">
                     <div class="input-field col s12">
@@ -58,10 +62,12 @@
                         <input id="color" type="email" class="validate" placeholder="Color">
                         <label for="email">Color</label>
                     </div>
-                    <div class="input-field col s12">
-                            <input id="pet_id_type" type="email" class="validate" placeholder="Type">
-                            <label for="email">Type</label>
-                        </div>
+                    <div class="input-field col s12" >
+                        <select id="pet_type_id" name="gender">
+                            <option value="1">Dog</option>
+                            <option value="2">Cat</option>
+                        </select>
+                        <label>Type</label>
                     </div>
                     <a class="waves-effect waves-light btn-large" id="submit">Update</a>
                 </form>
@@ -89,7 +95,7 @@
         <script type="text/javascript" src="js/material.js"></script>
         <script>
             $(document).ready(function () {
-                
+                $('select').material_select();
                 var getUrlParameter = function getUrlParameter(sParam) {
                 var sPageURL = decodeURIComponent(window.location.search.substring(1)),
                 sURLVariables = sPageURL.split('&'),
@@ -118,7 +124,38 @@
                         $('#pet_type_id').val(response.pet_type_id);
                     }
                 });
-                
+                $('#submit').click(function (e) {
+                    e.preventDefault();
+                    var name = $('#name').val();
+                    var age = $('#age').val();
+                    var gender = $('#gender').val();
+                    var image = $('#image').val();
+                    var breed = $('#breed').val();
+                    var color = $('#color').val();
+                    var pet_type_id = $('#pet_type_id').val();
+                    $.ajax({
+                        method: "POST",
+                        url: "http://cebupoundanimals.herokuapp.com/mobile/mypets/update/"+ getUrlParameter('id'),
+                        data: { 
+                            name: name, 
+                            age: age,
+                            gender: gender,
+                            image: image,
+                            breed: breed,
+                            color: color,
+                            pet_type_id: pet_type_id,
+                            user_id: localStorage.getItem('user_id')    
+                        },
+                        success: function () {
+                            if(response.status)
+                            {
+                            alert('Pet updated...');
+                            }else{
+                            alert('Unable to create pet...');
+                            }
+                        }
+                    });
+                });
                 $('.button-collapse').sideNav({
                     menuWidth: 300, // Default is 300
                     edge: 'left', // Choose the horizontal origin
