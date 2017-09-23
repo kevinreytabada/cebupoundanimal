@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!--
+        Customize this policy to fit your own app's needs. For more guidance, see:
+            https://github.com/apache/cordova-plugin-whitelist/blob/master/README.md#content-security-policy
+        Some notes:
+            * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
+            * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
+            * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
+                * Enable inline JS: add 'unsafe-inline' to default-src
+        -->
+        <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *"> -->
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+        <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous"> -->
+        <link rel="stylesheet" href="css/material.css">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <title>Hello World</title>
+    </head>
+    <body>
+        <div>   
+            <nav>
+                <div class="nav-wrapper">
+                    <a href="#" class="brand-logo center">Cebu Pound Animal</a>
+                    <ul id="nav-mobile">
+                    <li><a href="#" data-activates="slide-out" class="button-collapse">Menu</a>  </li>
+                    </ul>
+                </div>
+            </nav>
+            <br>
+            <div class="row">
+                <form class="col s12">
+                    <div class="row">
+                    <div class="input-field col s6">
+                        <input id="name" type="text" class="validate" name="name" placeholder="Name">
+                        <label for="first_name">Name</label>
+                    </div>
+                    <div class="input-field col s6">
+                        <input id="age" type="text" class="validate" name="age" placeholder="Age">
+                        <label for="last_name">Age</label>
+                    </div>
+                    </div>
+                    <div class="row">
+                    <div class="input-field col s12" >
+                        <select id="gender" name="gender">
+                            <!-- <option value="" disabled selected>Choose your option</option> -->
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                        </select>
+                        <label>Gender</label>
+                    </div>
+                    
+                    </div>
+                    <div class="row">
+                    <div class="input-field col s12">
+                        <input id="breed" type="text" class="validate" name="breed" placeholder="Breed">
+                        <label for="password">Breed</label>
+                    </div>
+                    </div>
+                    <div class="row">
+                    <div class="input-field col s12">
+                        <input id="color" type="text" class="validate" name="color"placeholder="Color">
+                        <label for="email">Color</label>
+                    </div>
+                    <div class="input-field col s12" >
+                        <select id="pet_type_id" name="gender">
+                            <option value="1">Dog</option>
+                            <option value="2">Cat</option>
+                        </select>
+                        <label>Type</label>
+                    </div>
+                    <a class="waves-effect waves-light btn-large" id="submit">Create</a>
+                </form>
+                </div>
+            <ul id="slide-out" class="side-nav">
+                <li>
+                    <div class="user-view">
+                        <div class="background">
+                            <img src="http://materializecss.com/images/office.jpg">
+                        </div>
+                        <a href="#!user"><img class="circle" src="http://materializecss.com/images/yuna.jpg"></a>
+                        <a href="#!name"><span class="white-text name">John Doe</span></a>
+                        <a href="#!email"><span class="white-text email">jdandturk@gmail.com</span></a>
+                    </div>
+                </li>
+                    <li><a href="pets.html">Pets</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><div class="divider"></div></li>
+                <!-- <li><a class="waves-effect" href="#!">Third Link With Waves</a></li> -->
+            </ul>    
+        </div>
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="js/jquery.js"></script>
+        <script type="text/javascript" src="js/material.js"></script>
+        <script>
+            $(document).ready(function () {
+
+                $('select').material_select();
+
+                $('#submit').click(function (e) {
+                    e.preventDefault();
+                    var name = $('#name').val();
+                    var age = $('#age').val();
+                    var gender = $('#gender').val();
+                    var image = $('#image').val();
+                    var breed = $('#breed').val();
+                    var color = $('#color').val();
+                    var pet_type_id = $('#pet_type_id').val();
+          
+                    $.ajax({
+                        method: "POST",
+                        url: "http://cebupoundanimals.herokuapp.com/mobile/mypets/create",
+                        data: { 
+                            name: name, 
+                            age: age,
+                            gender: gender,
+                            image: image,
+                            breed: breed,
+                            color: color,
+                            pet_type_id: pet_type_id,
+                            user_id: localStorage.getItem('user_id')    
+                        }
+                    })
+                    .done(function( response ) {
+                      if(response.status)
+                      {
+                        alert('Pet created...');
+                        Window.location.href = "pets.html";
+                      }else{
+                        alert('Unable to create pet...');
+                      }
+                    });
+                });
+                
+                $('.button-collapse').sideNav({
+                    menuWidth: 300, // Default is 300
+                    edge: 'left', // Choose the horizontal origin
+                    closeOnClick: true, // Closes side-nav on <a> clicks, useful for Angular/Meteor
+                    draggable: true, // Choose whether you can drag to open on touch screens,
+                    onOpen: function(el) {  }, // A function to be called when sideNav is opened
+                    onClose: function(el) { }, // A function to be called when sideNav is closed
+                    }
+                );
+            });
+        </script>
+    </body>
+</html>

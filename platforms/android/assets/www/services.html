@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!--
+        Customize this policy to fit your own app's needs. For more guidance, see:
+            https://github.com/apache/cordova-plugin-whitelist/blob/master/README.md#content-security-policy
+        Some notes:
+            * gap: is required only on iOS (when using UIWebView) and is needed for JS->native communication
+            * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
+            * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
+                * Enable inline JS: add 'unsafe-inline' to default-src
+        -->
+        <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *"> -->
+        <meta name="format-detection" content="telephone=no">
+        <meta name="msapplication-tap-highlight" content="no">
+        <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width">
+        <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous"> -->
+        <link rel="stylesheet" href="css/material.css">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <title>Hello World</title>
+    </head>
+    <body>
+        <div>   
+            <nav>
+                <div class="nav-wrapper">
+                    <a href="#" class="brand-logo center">Cebu Pound Animal</a>
+                    <ul id="nav-mobile">
+                    <li><a href="#" data-activates="slide-out" class="button-collapse">Menu</a>  </li>
+                    </ul>
+                </div>
+            </nav>
+            <br>
+            <a href="pets-create.html"class="btn-floating btn-large waves-effect waves-light red"><i class="material-icons">add</i></a>
+            <table class="striped">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Gender</th>
+                        <th>Bread</th>
+                        <th>Schedule</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+        
+                <tbody class="pets-data">
+                </tbody>
+            </table>
+
+            <ul id="slide-out" class="side-nav">
+                <li>
+                    <div class="user-view">
+                        <div class="background">
+                            <img src="http://materializecss.com/images/office.jpg">
+                        </div>
+                        <a href="#!user"><img class="circle" src="http://materializecss.com/images/yuna.jpg"></a>
+                        <a href="#!name"><span class="white-text name">John Doe</span></a>
+                        <a href="#!email"><span class="white-text email">jdandturk@gmail.com</span></a>
+                    </div>
+                </li>
+                    <li><a href="pets.html">Pets</a></li>
+                    <li><a href="services.html">Services</a></li>
+                    <li><div class="divider"></div></li>
+                <li><a class="waves-effect" href="#!">Third Link With Waves</a></li>
+            </ul>    
+        
+                <!-- Modal Structure -->
+            <div id="modal1" class="modal">
+                <div class="modal-content">
+                    <input type="hidden" name="pet_id" id="pet_id" value="">
+                    <div class="input-field col s12" >
+                        <select id="service_id">
+                            <option value="1">Deworming</option>
+                            <option value="2">Mange Treatment</option>
+                            <option value="3">Spay and Neuter</option>
+                            <option value="4">Rabies Vaccination</option>
+                            <option value="5">Basic Medical Consultation</option>
+                        </select>
+                        <label>Type</label>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat" id="submitRequest">Request</a>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript" src="cordova.js"></script>
+        <script type="text/javascript" src="js/index.js"></script>
+        <script type="text/javascript" src="js/jquery.js"></script>
+        <script type="text/javascript" src="js/material.js"></script>
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script> -->
+        <script>
+            $(document).ready(function () {
+                $('.modal').modal();
+                $('select').material_select();
+                $(document).on("click", ".click-modal", function () {
+                    var pet_id = $(this).data('id');
+                    $('#pet_id').val(pet_id);
+                });
+                $('#submitRequest').click(function (){
+                    var pet_id = $('#pet_id').val();
+                    var service_id = $('#service_id').val();
+                    $.ajax({
+                        method: "POST",
+                        url: "http://cebupoundanimals.herokuapp.com/mobile/mypets/service/create",
+                        data: { 
+                            pet_id: pet_id, 
+                            service_id: service_id 
+                        }
+                    })
+                    .done(function( response ) {
+                        if(response.status) {
+                        alert('Pet service requested. Wait for admin schedule');
+                        window.location.reload();
+                        } else {
+                        alert('Something went wrong...');
+                        window.location.reload();
+                        }
+                    });
+                });
+                $.ajax({
+                    method: "GET",
+                    url: "http://cebupoundanimals.herokuapp.com/mobile/mypets/" + localStorage.getItem('user_id'),
+                    success: function(response) {
+                        for (var i = response.length - 1; i >= 0; i--) {
+                            $('.pets-data').append(
+                                '<tr>' +
+                                // '<td><img src="http://localhost:8000/images/'+response[i].image+'" width="50" height="auto"></td>' + 
+                                '<td><img src="http://materializecss.com/images/yuna.jpg" width="50" height="auto"></td>'+
+                                '<td><a href="pets-details.html?id='+response[i].id+'">'+response[i].name+'</a></td>' +
+                                '<td>'+response[i].gender+'</td>' +
+                                '<td>'+response[i].breed+'</td>' + 
+                                '<td>N/A</td>' +
+                                '<td><a class="waves-effect waves-light btn modal-trigger click-modal" href="#modal1"  data-id="'+response[i].id+'">Request</a></td>'+ 
+                                'Request Service' +
+                                '</button></td>' +
+                                '</tr>'
+                                // '<td>'+response[i].color+'</td>'
+                            );
+                        }
+                    }
+                });
+                $('.button-collapse').sideNav({
+                    menuWidth: 300, // Default is 300
+                    edge: 'left', // Choose the horizontal origin
+                    closeOnClick: true, // Closes side-nav on <a> clicks, useful for Angular/Meteor
+                    draggable: true, // Choose whether you can drag to open on touch screens,
+                    onOpen: function(el) {  }, // A function to be called when sideNav is opened
+                    onClose: function(el) { }, // A function to be called when sideNav is closed
+                    }
+                );
+            });
+        </script>
+    </body>
+</html>
